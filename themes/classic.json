@@ -1,0 +1,15 @@
+{
+  "bg": "#f5eacb",
+  "menu": "#6b4121",
+  "segment": "#59371c",
+  "button": "#402713",
+  "text-menu": "#ffffff",
+  "text-desc": "#000000",
+  "entry-menu": "#402713",
+  "entry-menu-text": "#ffffff",
+  "entry-desc": "#e0d7bc",
+  "entry-desc-text": "#000000",
+  "button-bg": "#402713",
+  "button-text": "#ffffff",
+  "check-colour": "#18820c"
+}

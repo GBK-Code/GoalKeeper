@@ -1,5 +1,10 @@
 from tkinter import *
+import appearance_window as apr_w
+import theme_reader
 import os
+
+themes = theme_reader.get_themes()
+theme = themes[theme_reader.set_theme()]
 
 
 class App(Tk):
@@ -15,7 +20,8 @@ class App(Tk):
         self.done_img = PhotoImage(file="images/done.png")
         self.new_img = PhotoImage(file="images/new.png")
         self.delete_img = PhotoImage(file="images/delete.png")
-        self.config(bg="#f5eacb")
+        self.apear_img = PhotoImage(file="images/apear.png")
+        self.config(bg=theme["bg"])
 
         self.title("GoalKeeper")
         self.geometry("500x520")
@@ -32,103 +38,121 @@ class App(Tk):
 
         # Goals frame
 
-        self.frame = Frame(self, padx=5, bg="#6b4121")
+        self.frame = Frame(self, padx=5, bg=theme["menu"])
         self.frame.pack(side=LEFT, fill=BOTH)
 
-        self.toolbar_frame = Frame(self.frame, bg="#59371c")
+        self.toolbar_frame = Frame(self.frame, bg=theme["segment"])
         self.toolbar_frame.pack(pady=3, fill=X)
 
-        self.toolbar_hint = Label(self.toolbar_frame, font=self.hint_font, bg="#59371c", fg="white")
+        self.toolbar_hint = Label(self.toolbar_frame, font=self.hint_font, bg=theme["segment"], fg=theme["text-menu"])
         self.toolbar_hint.pack(side=RIGHT, padx=5)
 
         self.new_btn = Button(self.toolbar_frame, image=self.new_img, border=FALSE, highlightthickness=0,
-                               cursor="hand2", activebackground="#59371c", command=self.reset_app)
+                              cursor="hand2", activebackground=theme["segment"], bg=theme["segment"],
+                              command=self.reset_app)
         self.new_btn.pack(side=LEFT, pady=2)
         self.new_btn.bind("<Enter>", lambda event: self.show_toolbar_hint("New"))
         self.new_btn.bind("<Leave>", lambda event: self.show_toolbar_hint(""))
 
         self.save_btn = Button(self.toolbar_frame, image=self.save_img, border=FALSE, highlightthickness=0,
-                               cursor="hand2", activebackground="#59371c", command=self.enter_save_name)
+                               cursor="hand2", activebackground=theme["segment"], bg=theme["segment"],
+                               command=self.enter_save_name)
         self.save_btn.pack(side=LEFT, pady=2)
         self.save_btn.bind("<Enter>", lambda event: self.show_toolbar_hint("Save"))
         self.save_btn.bind("<Leave>", lambda event: self.show_toolbar_hint(""))
 
         self.load_btn = Button(self.toolbar_frame, image=self.load_img, border=FALSE, highlightthickness=0,
-                               cursor="hand2", activebackground="#59371c", command=self.open_load_window)
+                               cursor="hand2", activebackground=theme["segment"], bg=theme["segment"],
+                               command=self.open_load_window)
         self.load_btn.pack(side=LEFT, pady=2)
         self.load_btn.bind("<Enter>", lambda event: self.show_toolbar_hint("Load"))
         self.load_btn.bind("<Leave>", lambda event: self.show_toolbar_hint(""))
 
-        self.place_save_frame = Frame(self.frame, bg="#6b4121")
+        self.appear_btn = Button(self.toolbar_frame, image=self.apear_img, border=FALSE, highlightthickness=0,
+                                 cursor="hand2", activebackground=theme["segment"], bg=theme["segment"],
+                                 command=self.open_appearance)
+        self.appear_btn.pack(side=LEFT, pady=2)
+        self.appear_btn.bind("<Enter>", lambda event: self.show_toolbar_hint("Appearance"))
+        self.appear_btn.bind("<Leave>", lambda event: self.show_toolbar_hint(""))
+
+        self.place_save_frame = Frame(self.frame, bg=theme["menu"])
         self.place_save_frame.pack(fill=X)
 
-        self.save_frame = Frame(self.place_save_frame, bg="#59371c")
+        self.save_frame = Frame(self.place_save_frame, bg=theme["segment"])
 
-        self.save_hint = Label(self.save_frame, text="Save as", font=self.hint_font, bg="#59371c", fg="white")
+        self.save_hint = Label(self.save_frame, text="Save as", font=self.hint_font, bg=theme["segment"],
+                               fg=theme["text-menu"])
         self.save_hint.pack()
 
-        self.save_enter_name = Entry(self.save_frame, bg="#402713", fg="white", border=FALSE, width=25)
+        self.save_enter_name = Entry(self.save_frame, bg=theme["entry-menu"], fg=theme["entry-menu-text"], border=FALSE,
+                                     width=25)
         self.save_enter_name.pack(side=LEFT, padx=5, pady=5)
 
         self.done_save = Button(self.save_frame, image=self.done_img, border=FALSE, highlightthickness=0,
-                                cursor="hand2", activebackground="#59371c", command=self.save_book)
+                                cursor="hand2", activebackground=theme["segment"], command=self.save_book)
         self.done_save.pack(side=RIGHT, padx=5)
 
-        self.place_load_frame = Frame(self.frame, bg="#6b4121")
+        self.place_load_frame = Frame(self.frame, bg=theme["menu"])
         self.place_load_frame.pack(fill=X)
 
-        self.load_frame = Frame(self.place_load_frame, bg="#59371c")
+        self.load_frame = Frame(self.place_load_frame, bg=theme["segment"])
 
-        self.load_hint = Label(self.load_frame, text="Load", font=self.hint_font, bg="#59371c", fg="white")
+        self.load_hint = Label(self.load_frame, text="Load", font=self.hint_font, bg=theme["segment"],
+                               fg=theme["text-menu"])
         self.load_hint.pack()
 
-        self.no_saves_label = Label(self.load_frame, text="No savings yet", font=self.hint_font, bg="#59371c",
-                                    fg="white")
+        self.no_saves_label = Label(self.load_frame, text="No savings yet", font=self.hint_font, bg=theme["segment"],
+                                    fg=theme["text-menu"])
 
-        self.open_files_frame = Frame(self.load_frame, bg="#59371c")
+        self.open_files_frame = Frame(self.load_frame, bg=theme["segment"])
         self.open_files_frame.pack(fill=X)
 
-        self.close_load_btn = Button(self.load_frame, text="Close", font=self.button_font, bg="#402713", fg="white",
-                                     border=FALSE, cursor="hand2", command=self.close_load_window)
+        self.close_load_btn = Button(self.load_frame, text="Close", font=self.button_font, bg=theme["button-bg"],
+                                     fg=theme["button-text"], border=FALSE, cursor="hand2",
+                                     command=self.close_load_window)
 
-        self.input_frame = Frame(self.frame, bg="#59371c")
+        self.input_frame = Frame(self.frame, bg=theme["segment"])
         self.input_frame.pack(pady=5, anchor=W)
 
-        self.hint_label = Label(self.input_frame, text="Add a goal", fg="white", bg="#59371c",
+        self.hint_label = Label(self.input_frame, text="Add a goal", fg=theme["text-menu"], bg=theme["segment"],
                                 font=self.hint_font)
         self.hint_label.pack()
 
         self.add_categ = Button(self.input_frame, image=self.add_image, border=FALSE, cursor="hand2",
-                                highlightthickness=0, activebackground="#59371c", command=self.new_goal)
+                                highlightthickness=0, activebackground=theme["segment"], command=self.new_goal)
         self.add_categ.pack(side=RIGHT, pady=5, padx=5)
 
-        self.enter_name = Entry(self.input_frame, bg="#402713", fg="white", width=25, border=FALSE)
+        self.enter_name = Entry(self.input_frame, bg=theme["entry-menu"], fg=theme["entry-menu-text"], width=25,
+                                border=FALSE)
         self.enter_name.pack(side=LEFT, pady=5, padx=5)
 
-        self.goals_frame = Frame(self.frame, bg="#6b4121")
+        self.goals_frame = Frame(self.frame, bg=theme["menu"])
         self.goals_frame.pack(fill=BOTH)
 
         # Description frame
 
-        self.desc_frame = Frame(self, pady=5, bg="#f5eacb")
+        self.desc_frame = Frame(self, pady=5, bg=theme["bg"])
         self.desc_frame.pack(fill=X)
 
-        self.task_name = Label(self.desc_frame, text="Welcome!", font=("Arial", 30, "bold"), bg="#f5eacb")
+        self.task_name = Label(self.desc_frame, text="Welcome!", font=("Arial", 30, "bold"), bg=theme["bg"],
+                               fg=theme["text-desc"])
         self.task_name.pack()
 
-        self.input_step_frame = Frame(self.desc_frame, bg="#f5eacb")
+        self.input_step_frame = Frame(self.desc_frame, bg=theme["bg"])
 
-        self.hint_desc = Label(self.input_step_frame, text="Add a step", font=self.hint_font, bg="#f5eacb")
+        self.hint_desc = Label(self.input_step_frame, text="Add a step", font=self.hint_font, bg=theme["bg"],
+                               fg=theme["text-desc"])
         self.hint_desc.pack(side=LEFT)
 
         self.add_step = Button(self.input_step_frame, image=self.add_image, border=FALSE, highlightthickness=0,
-                               cursor="hand2", command=self.new_step)
+                               cursor="hand2", activebackground=theme["bg"], command=self.new_step)
         self.add_step.pack(side=RIGHT)
 
-        self.input_step = Entry(self.input_step_frame, border=FALSE, bg="#e0d7bc")
+        self.input_step = Entry(self.input_step_frame, border=FALSE, bg=theme["entry-desc"],
+                                fg=theme["entry-desc-text"])
         self.input_step.pack(fill=X, pady=5, padx=5)
 
-        self.steps_list_frame = Frame(self.desc_frame, bg="#f5eacb")
+        self.steps_list_frame = Frame(self.desc_frame, bg=theme["bg"])
 
     def new_goal(self) -> None:
         goal_name = self.enter_name.get().strip().capitalize()
@@ -140,17 +164,17 @@ class App(Tk):
 
             if len(goal_name) > 15:
                 goal_name = goal_name[:16] + "..."
-            goal_frame = Frame(self.goals_frame, bg="#6b4121")
+            goal_frame = Frame(self.goals_frame, bg=theme["menu"])
             goal_frame.pack(fill=X)
 
-            goal = Label(goal_frame, text=goal_name, font=self.text_font, bg="#6b4121", fg="white")
+            goal = Label(goal_frame, text=goal_name, font=self.text_font, bg=theme["menu"], fg=theme["text-menu"])
             goal.pack(side=LEFT)
 
-            check = Checkbutton(goal_frame, bg="#6b4121", fg="green", activebackground="#6b4121", cursor="hand2",
-                                border=FALSE)
+            check = Checkbutton(goal_frame, bg=theme["menu"], fg=theme["check-colour"], activebackground=theme["menu"],
+                                cursor="hand2", border=FALSE)
             click = self.tasks_num
             more_btn = Button(goal_frame, text=str(self.tasks_num), image=self.more_img, border=FALSE,
-                              highlightthickness=0, cursor="hand2", activebackground="#6b4121",
+                              highlightthickness=0, cursor="hand2", activebackground=theme["menu"], bg=theme["menu"],
                               command=lambda click=click: self.open_desc(click))
 
             check.pack(side=RIGHT)
@@ -166,15 +190,16 @@ class App(Tk):
             self.tasks[self.task_name["text"]].append(step_name)
             self.tasks[self.task_name["text"]][0].append(0)
 
-            step_frame = Frame(self.steps_list_frame, bg="#f5eacb")
+            step_frame = Frame(self.steps_list_frame, bg=theme["bg"])
             step_frame.pack(fill=X, padx=5)
 
-            check = Checkbutton(step_frame, bg="#f5eacb", activebackground="#f5eacb", fg="green", cursor="hand2",
-                                command=lambda i=self.steps_num: self.complete_step(i))
+            check = Checkbutton(step_frame, bg=theme["bg"], activebackground=theme["bg"], fg=theme["check-colour"],
+                                cursor="hand2", command=lambda i=self.steps_num: self.complete_step(i))
             check.pack(side=RIGHT)
 
-            step = Label(step_frame, text=f"{self.steps_num}. {step_name}", bg="#f5eacb", font=self.text_font)
-            step.pack(side=LEFT)
+            step_name = Label(step_frame, text=f"{self.steps_num}. {step_name}", bg=theme["bg"], fg=theme["text-desc"],
+                              font=self.text_font)
+            step_name.pack(side=LEFT)
 
     def open_desc(self, index: int) -> None:
         self.reset_steps()
@@ -189,21 +214,21 @@ class App(Tk):
         for i, step in enumerate(task):
             if i == 0:
                 continue
-            step_frame = Frame(self.steps_list_frame, bg="#f5eacb")
+            step_frame = Frame(self.steps_list_frame, bg=theme["bg"])
             step_frame.pack(fill=X, padx=5)
 
-            check = Checkbutton(step_frame, bg="#f5eacb", activebackground="#f5eacb", fg="green", cursor="hand2",
-                                command=lambda i=i: self.complete_step(i))
-            if task[0][i-1]:
+            check = Checkbutton(step_frame, bg=theme["bg"], activebackground=theme["bg"], fg=theme["check-colour"],
+                                cursor="hand2", command=lambda i=i: self.complete_step(i))
+            if task[0][i - 1]:
                 check.select()
 
             check.pack(side=RIGHT)
 
-            step = Label(step_frame, text=f"{i}. {step}", bg="#f5eacb", font=self.text_font)
+            step = Label(step_frame, text=f"{i}. {step}", bg=theme["bg"], fg=theme["text-desc"], font=self.text_font)
             step.pack(side=LEFT)
 
     def complete_step(self, index: int) -> None:
-        step_check = self.tasks[self.task_name["text"]][0][index-1]
+        step_check = self.tasks[self.task_name["text"]][0][index - 1]
         step_check = 1 - step_check
         self.tasks[self.task_name["text"]][0][index - 1] = step_check
 
@@ -257,21 +282,22 @@ class App(Tk):
 
         for file in self.open_files_frame.winfo_children():
             file.destroy()
-        names = [name[:-3] for name in os.listdir("saves")]
+        names = [name[:-3] for name in os.listdir("saves") if name[-3:] == ".gk"]
 
         if len(names) == 0:
             self.no_saves_label.pack()
 
         for file in names:
-            open_button = Frame(self.open_files_frame, bg="#59371c")
+            open_button = Frame(self.open_files_frame, bg=theme["segment"])
             open_button.pack(fill=X, padx=5)
 
-            open_file = Button(open_button, text=file, font=self.button_font, bg="#402713", fg="white",
-                               border=FALSE, cursor="hand2", command=lambda file=file: self.load_file(file))
+            open_file = Button(open_button, text=file, font=self.button_font, bg=theme["button-bg"],
+                               fg=theme["button-text"], border=FALSE, cursor="hand2",
+                               command=lambda file=file: self.load_file(file))
             open_file.pack(side=LEFT, expand=TRUE, fill=X, pady=1)
 
             del_button = Button(open_button, image=self.delete_img, border=FALSE, highlightthickness=0, cursor="hand2",
-                                activebackground="#59371c", command=lambda file=file: delete_file(file))
+                                activebackground=theme["segment"], command=lambda file=file: delete_file(file))
             del_button.pack(side=RIGHT, padx=2)
 
         self.save_frame.pack_forget()
@@ -309,17 +335,17 @@ class App(Tk):
             if len(task) > 15:
                 task = task[:16] + "..."
 
-            goal_frame = Frame(self.goals_frame, bg="#6b4121")
+            goal_frame = Frame(self.goals_frame, bg=theme["menu"])
             goal_frame.pack(fill=X)
 
-            goal = Label(goal_frame, text=task, font=self.text_font, bg="#6b4121", fg="white")
+            goal = Label(goal_frame, text=task, font=self.text_font, bg=theme["menu"], fg=theme["text-menu"])
             goal.pack(side=LEFT)
 
-            check = Checkbutton(goal_frame, bg="#6b4121", fg="green", activebackground="#6b4121", cursor="hand2",
-                                border=FALSE)
+            check = Checkbutton(goal_frame, bg=theme["menu"], fg=theme["check-colour"], activebackground=theme["menu"],
+                                cursor="hand2", border=FALSE)
             click = self.tasks_num
             more_btn = Button(goal_frame, text=str(self.tasks_num), image=self.more_img, border=FALSE,
-                              highlightthickness=0, cursor="hand2", activebackground="#6b4121",
+                              highlightthickness=0, cursor="hand2", activebackground=theme["menu"], bg=theme["menu"],
                               command=lambda click=click: self.open_desc(click))
 
             check.pack(side=RIGHT)
@@ -341,6 +367,9 @@ class App(Tk):
         self.tasks_names = []
 
         self.task_name["text"] = "Welcome!"
+
+    def open_appearance(self) -> None:
+        apr_w.Appearance(theme)
 
 
 if __name__ == "__main__":
