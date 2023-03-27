@@ -5,11 +5,13 @@ import os
 
 
 class Appearance(Toplevel):
-    def __init__(self, theme):
+    def __init__(self, themes):
         super().__init__()
-        self.theme = theme
+        with open("config.json", "r") as config_file:
+            self.selected_theme = json.load(config_file)["theme"]
+        theme = themes[self.selected_theme]
 
-        self.icon = PhotoImage(file="images/apear.png")
+        self.icon = PhotoImage(file=f"images/icon.png")
         self.iconphoto(False, self.icon)
         self.geometry("300x200")
         self.minsize(350, 200)
@@ -27,9 +29,10 @@ class Appearance(Toplevel):
         self.theme_hint.pack(pady=5)
 
         self.combox = ttk.Combobox(self.menu_prev, state="readonly",
-                                   values=list(map(lambda x: x[:-5], os.listdir("themes"))))
+                                   values=[file[:-5] for file in os.listdir("themes") if file[-5:] == ".json"])
         self.combox.pack(pady=5, padx=5)
         self.combox.bind("<<ComboboxSelected>>", self.select_theme)
+        self.combox.set(self.selected_theme)
 
         self.needs_res = Label(self.menu_prev, text="App restart required", font=("Arial", 10, "bold"),
                                bg=theme["menu"], fg=theme["text-menu"])
@@ -77,6 +80,28 @@ class Appearance(Toplevel):
             config = json.load(config_file)
 
         config["theme"] = self.combox.get()
+        self.selected_theme = config["theme"]
 
         with open("config.json", "w") as config_file:
             json.dump(config, config_file, ensure_ascii=False, indent=2)
+
+        self.change_view(self.combox.get())
+
+    def change_view(self, theme_name) -> None:
+        with open(f"themes/{theme_name}.json") as theme_file:
+            theme = json.load(theme_file)
+
+        self.menu_prev.config(bg=theme["menu"])
+        self.theme_hint.config(bg=theme["menu"], fg=theme["text-menu"])
+        self.needs_res.config(bg=theme["menu"], fg=theme["text-menu"])
+        self.prev_seg.config(bg=theme["segment"])
+        self.prev_hint.config(bg=theme["segment"], fg=theme["text-menu"])
+        self.prev_entry.config(bg=theme["entry-menu"], fg=theme["entry-menu-text"])
+        self.prev_btn.config(bg=theme["button-bg"], fg=theme["button-text"])
+
+        self.prev_desc.config(bg=theme["bg"])
+        self.prev_desc_lbl.config(bg=theme["bg"], fg=theme["text-desc"])
+        self.prev_entry_desc.config(bg=theme["entry-desc"], fg=theme["entry-desc-text"])
+        self.prev_step_frame.config(bg=theme["bg"])
+        self.prev_step.config(bg=theme["bg"], fg=theme["text-desc"])
+        self.prev_check.config(bg=theme["bg"], fg=theme["check-colour"], activebackground=theme["bg"])
