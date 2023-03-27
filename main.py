@@ -4,7 +4,8 @@ import theme_reader
 import os
 
 themes = theme_reader.get_themes()
-theme = themes[theme_reader.set_theme()]
+theme_name = theme_reader.set_theme()
+theme = themes[theme_name]
 
 
 class App(Tk):
@@ -13,14 +14,14 @@ class App(Tk):
         self.icon = PhotoImage(file="images/icon.png")
         self.iconphoto(False, self.icon)
 
-        self.add_image = PhotoImage(file="images/add.png")
-        self.more_img = PhotoImage(file="images/more.png")
-        self.save_img = PhotoImage(file="images/save.png")
-        self.load_img = PhotoImage(file="images/load.png")
-        self.done_img = PhotoImage(file="images/done.png")
-        self.new_img = PhotoImage(file="images/new.png")
-        self.delete_img = PhotoImage(file="images/delete.png")
-        self.apear_img = PhotoImage(file="images/apear.png")
+        self.add_image = PhotoImage(file=f"images/{theme_name}/add.png")
+        self.more_img = PhotoImage(file=f"images/{theme_name}/more.png")
+        self.save_img = PhotoImage(file=f"images/{theme_name}/save.png")
+        self.load_img = PhotoImage(file=f"images/{theme_name}/load.png")
+        self.done_img = PhotoImage(file=f"images/{theme_name}/done.png")
+        self.new_img = PhotoImage(file=f"images/{theme_name}/new.png")
+        self.delete_img = PhotoImage(file=f"images/{theme_name}/delete.png")
+        self.apear_img = PhotoImage(file=f"images/{theme_name}/apear.png")
         self.config(bg=theme["bg"])
 
         self.title("GoalKeeper")
@@ -89,7 +90,8 @@ class App(Tk):
         self.save_enter_name.pack(side=LEFT, padx=5, pady=5)
 
         self.done_save = Button(self.save_frame, image=self.done_img, border=FALSE, highlightthickness=0,
-                                cursor="hand2", activebackground=theme["segment"], command=self.save_book)
+                                cursor="hand2", activebackground=theme["segment"], bg=theme["segment"],
+                                command=self.save_book)
         self.done_save.pack(side=RIGHT, padx=5)
 
         self.place_load_frame = Frame(self.frame, bg=theme["menu"])
@@ -119,7 +121,8 @@ class App(Tk):
         self.hint_label.pack()
 
         self.add_categ = Button(self.input_frame, image=self.add_image, border=FALSE, cursor="hand2",
-                                highlightthickness=0, activebackground=theme["segment"], command=self.new_goal)
+                                bg=theme["segment"], highlightthickness=0, activebackground=theme["segment"],
+                                command=self.new_goal)
         self.add_categ.pack(side=RIGHT, pady=5, padx=5)
 
         self.enter_name = Entry(self.input_frame, bg=theme["entry-menu"], fg=theme["entry-menu-text"], width=25,
@@ -145,7 +148,7 @@ class App(Tk):
         self.hint_desc.pack(side=LEFT)
 
         self.add_step = Button(self.input_step_frame, image=self.add_image, border=FALSE, highlightthickness=0,
-                               cursor="hand2", activebackground=theme["bg"], command=self.new_step)
+                               cursor="hand2", activebackground=theme["bg"], bg=theme["bg"], command=self.new_step)
         self.add_step.pack(side=RIGHT)
 
         self.input_step = Entry(self.input_step_frame, border=FALSE, bg=theme["entry-desc"],
@@ -297,7 +300,8 @@ class App(Tk):
             open_file.pack(side=LEFT, expand=TRUE, fill=X, pady=1)
 
             del_button = Button(open_button, image=self.delete_img, border=FALSE, highlightthickness=0, cursor="hand2",
-                                activebackground=theme["segment"], command=lambda file=file: delete_file(file))
+                                activebackground=theme["segment"], bg=theme["segment"],
+                                command=lambda file=file: delete_file(file))
             del_button.pack(side=RIGHT, padx=2)
 
         self.save_frame.pack_forget()
@@ -324,10 +328,13 @@ class App(Tk):
                 goal_checks.append(goal.split("|")[2])
 
         for i, goal_name in enumerate(goal_names):
-            self.tasks[goal_name] = [list(map(int, goal_checks[i][:-1].split(",")))]
-            steps = goal_steps[i][:-1].split(",")
-            for step in steps:
-                self.tasks[goal_name].append(step)
+            if goal_steps != [""]:
+                self.tasks[goal_name] = [list(map(int, goal_checks[i][:-1].split(",")))]
+                steps = goal_steps[i][:-1].split(",")
+                for step in steps:
+                    self.tasks[goal_name].append(step)
+            else:
+                self.tasks[goal_name] = [[]]
 
         # create tasks
         for task in self.tasks:
@@ -369,7 +376,7 @@ class App(Tk):
         self.task_name["text"] = "Welcome!"
 
     def open_appearance(self) -> None:
-        apr_w.Appearance(theme)
+        apr_w.Appearance(themes)
 
 
 if __name__ == "__main__":
